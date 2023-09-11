@@ -1,0 +1,364 @@
+select lower(ename) from emp;
+
+select * from emp where job = upper('manager');
+
+select substr('my name is tarun an i do',0,10) from dual;
+
+select lpad('run',10,'&') from dual;
+
+select rtrim('saitarunyadavvvvvvv','v') from dual;
+
+select round(100.6484844545) from dual;
+
+select trunc(100.6484844545,2) from dual;
+
+select months_between('02/04/2002','02/04/2001') from dual;
+
+select trunc(systimestamp , 'year') from dual;
+
+select to_char(sysdate,'ddth "of" mon, yyyy') from dual;
+
+select to_char(sal,'$9,999.99') from emp;
+
+select ename,job,sal,nvl(comm,'no data found') from emp
+where empno in (7839, 7698, 7566, 7654);
+
+select ename,job,sal,nvl(to_char(comm),'no data found') from emp;
+
+select ename, nvl(to_char(nullif(length(ename),5)),'length is 5') from emp;
+
+select ename || ' has the population of ' || sal as assignment from emp;
+
+--grouping functions
+
+select max(sal) from emp;
+
+select min(sal) from emp;
+
+select sum(sal) from emp;
+
+select max(sal) from emp where job like 'MANAGER';
+
+select round(avg(sal)) from emp;
+
+select count(comm) from emp;
+
+select avg(sal) from emp;
+
+select avg(sal),job from emp
+group by job
+having job IN ('ANALYST','MANAGER');
+
+SELECT count(*),deptno from emp
+group by deptno
+having count(*)>3;
+
+SELECT job,count(*) from emp
+group by job;
+
+SELECT job,count(*),deptno from emp
+group by job,deptno
+order by deptno;
+
+select * from emp where deptno = (select deptno from dept where loc = 'CHICAGO');
+
+select * from emp where deptno in (select deptno from dept);
+
+--joins
+
+select * from emp;
+
+select * from dept;
+
+select * from emp, dept where emp.deptno = dept.deptno
+
+select ename,job,sal from emp where emp.deptno = (select deptno from dept where loc = 'DALLAS');
+
+select ename,job,sal from emp, dept where emp.deptno = dept.deptno and dept.loc = 'DALLAS'
+
+select e.ename, m.ename
+from (select ename,mgr,job from emp) e inner join (select empno,ename,job from emp) m  
+on
+e.mgr = m.empno;
+
+select e.ename as employee,m.ename as manager
+from emp e,emp m
+where e.mgr = m.empno
+
+select * from emp cross join dept;
+
+select ename,mgr,loc 
+from emp natural join dept;
+
+select ename,mgr,loc 
+from emp join dept using (deptno);
+
+CREATE TABLE job_grade(Grade_level varchar(2) not null,
+lowest_sal number not null,highest_sal number not null);
+
+
+INSERT ALL
+INTO job_grade
+VALUES ('A', 0, 1000)
+INTO job_grade
+VALUES ('B', 1001, 2000)
+INTO job_grade
+VALUES ('C', 2001, 3000)
+INTO job_grade
+VALUES ('D', 3001, 4000)
+INTO job_grade
+VALUES ('E', 4001, 5000)
+SELECT * FROM DUAL;
+
+select * from job_grade;
+
+select e.ename,e.sal,j.grade_level
+from emp e join job_grade j
+on e.sal between j.lowest_sal and j.highest_sal;
+
+select ename,mgr,loc 
+from emp join dept using (deptno);
+
+CREATE TABLE job_grade(Grade_level varchar(2) not null,
+lowest_sal number not null,highest_sal number not null);
+
+
+select ename,job, 
+(case job
+    when 'PRESIDENT' then 'big shot'
+    when 'MANAGER' then 'decides the pay'
+    when 'ANALYST' then 'good at math'
+    when 'CLERK' then 'hard worker'
+    else 'no comment'
+    end) as "comment" from emp
+
+select ename,sal,case 
+    when sal >= 3000 then 'bigshot'
+    when sal<3000 then 'need more'
+    end as sal_stat
+from emp;
+
+
+create table stores 
+(
+    store_id number not null,
+    city varchar(50)
+)
+
+select * from stores order by store_id
+
+insert into stores(store_id,city)
+values (1,'boston')
+insert into stores(store_id,city)
+values (2,'paris')
+
+insert all 
+    into stores (store_id,city) values(3,'delhi')
+    into stores (store_id,city) values(4,'tokyo')
+select * from dual;
+
+CREATE TABLE products
+(
+    product_id number not null,
+    name varchar(50),
+    product_cost number(5,2),
+    product_retail number(5,2),
+    product_type varchar(10),
+    store_id number not null,
+
+    CONSTRAINT product_pk PRIMARY KEY (product_id)
+)
+
+INSERT INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+    VALUES (1001, 'Colgate Toothpaste', 2.25, 5.47, 'hygiene', 2)
+
+INSERT INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+    VALUES (1002, 'Colgate Toothpaste', 2.25, 5.47, 'hygiene', 2)
+
+INSERT INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+    VALUES (1003, 'Listerine Mouthwash', 1.75, 4.81, 'hygiene', 3)
+
+SELECT * from products order by product_id 
+
+INSERT ALL
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1004, 'T-Shirt', 1.75, 7.77, 'Clothing', 2)
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1005, 'T-Shirt', 1.65, 7.85, 'Clothing', 2)
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1006, 'T-Shirt', 1.73, 7.80, 'Clothing', 3)
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1007, 'Shorts', 0.73, 5.60, 'Clothing', 3)
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1008, 'Dress Shoes', 17.85, 87.67, 'Clothing', 2)
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1009, 'Garden Chair', 12.01, 27.87, 'Home & Gar', 2)
+    INTO products (product_id, name, product_cost, product_retail, product_type, store_id )
+        VALUES (1010, 'Grass Fertilizer', 3.20, 8.70, 'Home & Gar', 2)
+SELECT * FROM DUAL; 
+
+
+CREATE table destt_tbl_1
+(
+    id number,
+    name varchar2(50),
+    date_of date
+)
+
+
+CREATE table destt_tbl_2
+(
+    id number,
+    name varchar2(50),
+    date_of date
+)
+
+
+CREATE table destt_tbl_3
+(
+    id number,
+    name varchar2(50),
+    date_of date
+)
+
+
+INSERT ALL
+    INTO dest_tbl_1 (id, name, date_of) values (EMPNO, ENAME, HIREDATE)
+    INTO dest_tbl_2 (id, name, date_of) values (EMPNO, ENAME, HIREDATE)
+    INTO dest_tbl_3 (id, name, date_of) values (EMPNO, ENAME, HIREDATE)
+SELECT empno, ename, hiredate
+FROM emp
+
+
+SELECT * FROM destt_tbl_2
+
+
+INSERT ALL
+WHEN sal <= 1500 THEN
+    INTO destt_tbl_1 (id, name, date_of) values (EMPNO, ENAME, HIREDATE)
+WHEN sal BETWEEN 1501 AND 2500 THEN 
+    INTO destt_tbl_2 (id, name, date_of) values (EMPNO, ENAME, HIREDATE)
+WHEN sal  > 2500 THEN
+    INTO destt_tbl_3 (id, name, date_of) values (EMPNO, ENAME, HIREDATE)
+SELECT empno, ename, hiredate, sal
+FROM emp
+
+
+SELECT * FROM destt_tbl_3
+
+
+SELECT * FROM dest_tbl_3
+
+SELECT * FROM products
+INSERT INTO PRODUCTS VALUES (1011, '', 4.00, 8.00, 'Clothing', 3)
+
+ALTER TABLE products
+    MODIFY name varchar2(50) not null;
+
+DELETE FROM products WHERE product_id = 1011
+
+DESCRIBE product_pk
+
+DESCRIBE products
+
+ALTER TABLE products
+    MODIFY (product_cost number(5,2) not null,
+            product_retail number(5,2) not null );
+
+ALTER TABLE products
+    RENAME COLUMN name to product_name;
+
+SELECT * FROM products
+
+CREATE TABLE employees AS
+SELECT empno, ename, job, hiredate, sal, comm
+FROM emp;
+
+SELECT * from employees
+
+DESCRIBE employees
+
+DESCRIBE emp
+
+ALTER TABLE employees
+    ADD store_id number; 
+
+SELECT * from employees
+
+UPDATE employees
+SET store_id = 3
+WHERE ename in ('KING', 'BLAKE', 'CLARK')
+
+UPDATE employees
+SET store_id = 2
+WHERE job = 'SALESMAN'
+
+UPDATE employees
+SET store_id = 4
+WHERE job = 'CLERK'
+
+UPDATE employees
+SET store_id = 4
+WHERE job = 'ANALYST'
+
+UPDATE employees
+SET store_id = 3
+WHERE ename = 'JONES'
+
+ALTER TABLE employees
+    MODIFY store_id number not null;
+
+CREATE TABLE existing_customers (
+  customer_id NUMBER(5),
+  first_name VARCHAR2(100),
+  last_name VARCHAR2(100),
+  address_state VARCHAR2(10),
+  email_address VARCHAR2(350),
+  CONSTRAINT old_pk_cust PRIMARY KEY (customer_id)
+);
+
+BEGIN
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address)
+	VALUES (1, 'Teresa', 'Hudson', 'NY', 'thudson@abc.com');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (2, 'Fred', 'Montgomery', 'CA', 'fmont@gmail.com');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (3, 'Lois', 'Lawson', 'OR', 'lois_law@outlook.com');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (4, 'Alice', 'Perry', 'SC', 'aliceperry');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (5, 'Ralph', 'Montgomery', 'TX', 'ralph_mont25@gmail.com');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (6, 'Dorothy', 'Armstrong', 'OR', 'abc123@abc.com');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (7, 'Fred', 'Wallace', 'NY', 'wallacef@testwebsite.co.uk');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (8, 'Joseph', 'Bell', 'FL', 'jbell@comm.edu');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (9, 'Lois', 'Martinez', 'CALIF', 'loismar@awe.com');
+	INSERT INTO existing_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (10, 'Robert', 'Rice', 'IN', 'robrice123');
+END;
+
+CREATE TABLE  new_customers(
+  customer_id NUMBER(5),
+  first_name VARCHAR2(100),
+  last_name VARCHAR2(100),
+  address_state VARCHAR2(10),
+  email_address VARCHAR2(350)
+);
+
+BEGIN
+	INSERT INTO new_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (15, 'John', 'Stock', 'ND', 'js1980@outlook.com');
+	INSERT INTO new_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (12, 'Joseph', 'Bell', 'OR', 'thebell@yahoo.com');
+	INSERT INTO new_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (3, 'Lois', 'Lawson', 'WA', 'lois_law@outlook.com');
+	INSERT INTO new_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (8, 'Joseph', 'Bell', 'FL', 'jbell@gmail.com');
+	INSERT INTO new_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (1, 'Teresa', 'Hudson', 'NY', 'thudson@abc.com');
+	INSERT INTO new_customers (customer_id, first_name, last_name, address_state, email_address) 
+	VALUES (4, 'Alice', 'Howard', 'SC', 'aliceperry@gmail.com');
+END;
